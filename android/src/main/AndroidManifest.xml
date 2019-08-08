@@ -1,0 +1,22 @@
+
+  <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.digaus.capbackgroundfcm.capacitorbackgroundfcm">
+    <application>
+      <activity android:name="com.digaus.capbackgroundfcm.BackgroundFCMHandler"
+                android:exported="true"
+                android:permission="${applicationId}.permission.BackgroundHandlerActivity">
+        <intent-filter>
+          <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+          <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+      </activity>
+
+      <service
+          android:name="com.digaus.capbackgroundfcm.BackgroundFCMService"
+          android:exported="false" >
+        <intent-filter android:priority="100" >
+          <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+      </service>
+    </application>
+  </manifest>

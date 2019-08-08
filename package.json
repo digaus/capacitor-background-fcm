@@ -1,0 +1,49 @@
+{
+  "name": "capacitor-background-fcm",
+  "version": "0.0.2",
+  "description": "Background FCM handling",
+  "main": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "clean": "",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "author": "Dirk Gausmann",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/core": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^3.2.4",
+    "@capacitor/ios": "latest",
+    "@capacitor/android": "latest"
+  },
+  "files": [
+    "dist/",
+    "ios/",
+    "android/",
+    "CapacitorBackgroundFcm.podspec"
+  ],
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "native"
+  ],
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digaus/capacitor-background-fcm"
+  },
+  "bugs": {
+    "url": "https://github.com/digaus/capacitor-background-fcm/issues"
+  }
+}
