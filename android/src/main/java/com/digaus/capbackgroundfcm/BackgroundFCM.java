@@ -28,9 +28,10 @@ public class BackgroundFCM extends Plugin  {
 
     public void load() {
         staticBridge = this.bridge;
-        if (this.data != null) {
+        if (this.id != null && this.data != null) {
             this.handleNotificationTab(this.id, this.data);
-            this.data = null;
+            this.id = null;
+            this.data = null
         }
     }
 
@@ -72,6 +73,7 @@ public class BackgroundFCM extends Plugin  {
     public static void onNotificationTap(String id, String data) {
         BackgroundFCM pushPlugin = BackgroundFCM.getBackgroundFCMInstance();
         if (pushPlugin == null) {
+            BackgroundFCM.id = id;
             BackgroundFCM.data = data;
         } else {
             pushPlugin.handleNotificationTab(id, data);
