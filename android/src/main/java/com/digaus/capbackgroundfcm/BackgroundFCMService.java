@@ -40,8 +40,9 @@ public class BackgroundFCMService extends CapacitorFirebaseMessagingService {
   // [START receive_message]
   @Override
   public void onMessageReceived(RemoteMessage remoteMessage) {
-    // Check if message contains a data payload.
-    if (remoteMessage.getData().size() > 0) {
+    // Check if message contains a data payload
+     Log.d(TAG, remoteMessage.getMessageId());
+    if (remoteMessage.getNotification() == null && remoteMessage.getData().size() > 0) {
       Log.d(TAG, "Message data payload: " + remoteMessage.getData());
       BackgroundFCMHandler converter = new BackgroundFCMHandler(this);
       BackgroundFCMData data = converter.handleNotification(remoteMessage);
@@ -91,8 +92,10 @@ public class BackgroundFCMService extends CapacitorFirebaseMessagingService {
                   NotificationManager.IMPORTANCE_DEFAULT);
           notificationManager.createNotificationChannel(channel);
       }
-
-      notificationManager.notify(0, notificationBuilder.build());
-
+      int notId = 0;
+      if (data.get("id") != null) {
+          notId = Integer.parseInt(data.get("id"));
+      }
+      notificationManager.notify(notId, notificationBuilder.build());
   }
 }
