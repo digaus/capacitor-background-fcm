@@ -19,7 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @NativePlugin(requestCodes = PluginRequestCodes.NOTIFICATION_OPEN)
-public class BackgroundFCM extends Plugin  {
+public class BackgroundFCM extends Plugin {
     private static String TAG = "BackgroundFCM";
 
     public static Bridge staticBridge = null;
@@ -29,7 +29,7 @@ public class BackgroundFCM extends Plugin  {
     public void load() {
         staticBridge = this.bridge;
         if (this.id != null && this.data != null) {
-            this.handleNotificationTab(this.id, this.data);
+            this.handleNotificationTap(this.id, this.data);
             this.id = null;
             this.data = null;
         }
@@ -55,7 +55,7 @@ public class BackgroundFCM extends Plugin  {
             call.error("File write failed: " + e.toString());
         }
     }
-    public void handleNotificationTab(String id, String data) {
+    public void handleNotificationTap(String id, String data) {
         JSObject notificationJson = new JSObject();
         JSObject dataObject = null;
         try {
@@ -76,7 +76,7 @@ public class BackgroundFCM extends Plugin  {
             BackgroundFCM.id = id;
             BackgroundFCM.data = data;
         } else {
-            pushPlugin.handleNotificationTab(id, data);
+            pushPlugin.handleNotificationTap(id, data);
         }
 
     }

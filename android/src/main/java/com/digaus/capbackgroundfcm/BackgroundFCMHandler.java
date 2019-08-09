@@ -52,7 +52,7 @@ public class BackgroundFCMHandler {
     private BackgroundFCMData handleDeviceUpdate(RemoteMessage remoteMessage, JSONObject obj) {
         try {
             JSONObject translations = obj.getJSONObject("translations");
-            List<String> filteredDevices = this.checkFirmware(obj, remoteMessage);
+            List<String> filteredDevices = this.checkFirmware(obj);
             if (filteredDevices.size() > 0) {
                 String title = translations.getString("app.shelly-home.device-update.update.label");
                 String body = translations.getString("app.shelly-home.device-update.available.label").replace("{{count}}", filteredDevices.size() + "");
@@ -86,7 +86,7 @@ public class BackgroundFCMHandler {
         return jsonObject;
     }
 
-    private List<String> checkFirmware(JSONObject obj, RemoteMessage remoteMessage) {
+    private List<String> checkFirmware(JSONObject obj) {
         List<String> filteredDevices = new ArrayList<>();
         try {
             JSONArray devicesJSONArray  = obj.getJSONArray("devices");
@@ -116,6 +116,7 @@ public class BackgroundFCMHandler {
                             Integer statusTime = Integer.parseInt(statusFw.split("-")[1]);
                             Log.d(TAG, updateDate.toString() + ">" + statusDate.toString() + "," + updateTime.toString() + ">" + statusTime.toString());
                             if (updateDate > statusDate && updateTime > statusTime) {
+                            // if (updateDate >= statusDate && updateTime >= statusTime) {
                                 filteredDevices.add(device);
                             }
                         }
@@ -131,7 +132,7 @@ public class BackgroundFCMHandler {
         return filteredDevices;
     }
     private JSONObject getJSONObjectFromURL(String urlString) throws IOException, JSONException {
-        HttpURLConnection urlConnection = null;
+        HttpURLConnection urlConnection;
         URL url = new URL(urlString);
         urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setRequestMethod("GET");
