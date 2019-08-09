@@ -15,15 +15,6 @@ import android.util.Log;
 import com.getcapacitor.CapacitorFirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,88 +43,15 @@ public class BackgroundFCMService extends CapacitorFirebaseMessagingService {
     // Check if message contains a data payload.
     if (remoteMessage.getData().size() > 0) {
       Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-      JSONObject obj = this.readFile();
-      try {
-        JSONObject translations = obj.getJSONObject("translations");
-        List<String> filteredDevices = this.checkFirmware(obj, remoteMessage);
-
-        if (filteredDevices.size() > 0) {
-            String title = translations.getString("app.shelly-home.device-update.update.label");
-            String message = translations.getString("app.shelly-home.device-update.available.label").replace("{{count}}", filteredDevices.size() + "");
-            this.sendNotification(remoteMessage.getMessageId(), title, message, remoteMessage.getData());
-        }
-      } catch (JSONException e) {
-        Log.e(TAG, e.toString());
+      BackgroundFCMHandler converter = new BackgroundFCMHandler(this);
+      BackgroundFCMData data = converter.handleNotification(remoteMessage);
+      if (data != null) {
+          this.sendNotification(remoteMessage.getMessageId(), data.getTitle(), data.getBody(), remoteMessage.getData());
       }
-
-      Log.d(TAG, obj.toString());
 
     }
     super.onMessageReceived(remoteMessage);
 
-  }
-
-  private List<String> checkFirmware(JSONObject obj, RemoteMessage remoteMessage) {
-      List<String> filteredDevices = new ArrayList<>();
-      try {
-          JSONArray devicesJSONArray  = obj.getJSONArray("devices");
-          ArrayList<String> devices = new ArrayList<>();
-          if (devicesJSONArray != null) {
-              for (int i=0; i<devicesJSONArray.length(); i++){
-                  devices.add(devicesJSONArray.getString(i));
-              }
-          }
-          JSONObject deviceList = obj.getJSONObject("deviceList");
-          JSONObject deviceStatusList = obj.getJSONObject("deviceStatusList");
-          JSONObject firmwareList = new JSONObject(remoteMessage.getData().get("updates"));
-
-
-          for (String device : devices) {
-              String id = device.substring(0, 6);
-              if (deviceStatusList.getJSONObject(id) != null) {
-                  // 20190531-075825
-                  String statusFw = deviceStatusList.getJSONObject(id).getJSONObject("update").getString("old_version").split("/")[0];
-                  String type = deviceList.getJSONObject(id).getString("type");
-                  JSONObject firmware = firmwareList.getJSONObject(type);
-                  if (firmware != null) {
-                      String updateFw = firmware.getString("version").split("/")[0];
-                      Integer updateDate = Integer.parseInt(updateFw.split("-")[0]);
-                      Integer statusDate = Integer.parseInt(statusFw.split("-")[0]);
-                      Integer updateTime = Integer.parseInt(updateFw.split("-")[1]);
-                      Integer statusTime = Integer.parseInt(statusFw.split("-")[1]);
-                      Log.d(TAG, updateDate.toString() + ">" + statusDate.toString() + "," + updateTime.toString() + ">" + statusTime.toString());
-                      if (updateDate < statusDate && updateTime < statusTime) {
-                          filteredDevices.add(device);
-                      }
-                  }
-              }
-          }
-      } catch (JSONException e) {
-          Log.e(TAG, e.toString());
-      }
-      return filteredDevices;
-  }
-  private JSONObject readFile() {
-    JSONObject jsonObject = new JSONObject();
-    try {
-      FileInputStream in = openFileInput("config.txt");
-      InputStreamReader inputStreamReader = new InputStreamReader(in);
-      BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-      StringBuilder sb = new StringBuilder();
-      String line;
-      while ((line = bufferedReader.readLine()) != null) {
-        sb.append(line);
-      }
-      inputStreamReader.close();
-      try {
-        jsonObject = new JSONObject(sb.toString());
-      }catch (JSONException err){
-        Log.e(TAG, err.toString());
-      }
-    } catch(Exception e){
-      Log.e(TAG, e.toString());
-    }
-    return jsonObject;
   }
 
   /**
@@ -142,7 +60,7 @@ public class BackgroundFCMService extends CapacitorFirebaseMessagingService {
    * @param message FCM message body received.
    */
   private void sendNotification(String id, String title, String message, Map<String, String> data) {
-      Intent intent = new Intent(this, BackgroundFCMHandler.class);
+      Intent intent = new Intent(this, BackgroundFCMTapHandler.class);
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
       intent.putExtra("id", id);
       intent.putExtra("data", data.toString());

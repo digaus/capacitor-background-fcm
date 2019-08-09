@@ -2,7 +2,7 @@
   <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.digaus.capbackgroundfcm.capacitorbackgroundfcm">
     <application>
-      <activity android:name="com.digaus.capbackgroundfcm.BackgroundFCMHandler"
+      <activity android:name="com.digaus.capbackgroundfcm.BackgroundFCMTapHandler"
                 android:exported="true"
                 android:permission="${applicationId}.permission.BackgroundHandlerActivity">
         <intent-filter>
