@@ -12,8 +12,6 @@ import com.getcapacitor.PluginHandle;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.PluginRequestCodes;
 
-import org.json.JSONException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,15 +21,13 @@ public class BackgroundFCM extends Plugin {
     private static String TAG = "BackgroundFCM";
 
     public static Bridge staticBridge = null;
-    public static String data = null;
-    public static String id = null;
+    public static BackgroundFCMRemoteMessage remoteMessage;
 
     public void load() {
         staticBridge = this.bridge;
-        if (this.id != null && this.data != null) {
-            this.handleNotificationTap(this.id, this.data);
-            this.id = null;
-            this.data = null;
+        if (this.remoteMessage != null) {
+            this.handleNotificationTap(this.remoteMessage);
+            this.remoteMessage = null;
         }
     }
 
@@ -55,28 +51,21 @@ public class BackgroundFCM extends Plugin {
             call.error("File write failed: " + e.toString());
         }
     }
-    public void handleNotificationTap(String id, String data) {
+    public void handleNotificationTap(BackgroundFCMRemoteMessage remoteMessage) {
         JSObject notificationJson = new JSObject();
-        JSObject dataObject = null;
-        try {
-            dataObject = new JSObject(data);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        notificationJson.put("id", id);
-        notificationJson.put("data", dataObject);
+        notificationJson.put("id", remoteMessage.getId());
+        notificationJson.put("data", remoteMessage.getData());
         JSObject actionJson = new JSObject();
         actionJson.put("actionId", "tap");
         actionJson.put("notification", notificationJson);
         notifyListeners("pushNotificationActionPerformed", actionJson, true);
     }
-    public static void onNotificationTap(String id, String data) {
+    public static void onNotificationTap(BackgroundFCMRemoteMessage remoteMessage) {
         BackgroundFCM pushPlugin = BackgroundFCM.getBackgroundFCMInstance();
         if (pushPlugin == null) {
-            BackgroundFCM.id = id;
-            BackgroundFCM.data = data;
+            BackgroundFCM.remoteMessage = remoteMessage;
         } else {
-            pushPlugin.handleNotificationTap(id, data);
+            pushPlugin.handleNotificationTap(remoteMessage);
         }
 
     }

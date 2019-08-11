@@ -13,9 +13,15 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.getcapacitor.CapacitorFirebaseMessagingService;
+import com.getcapacitor.JSObject;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONException;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
+
 
 /**
  * NOTE: There can only be one service in each app that receives FCM messages. If multiple
@@ -44,22 +50,30 @@ public class BackgroundFCMService extends CapacitorFirebaseMessagingService {
      Log.d(TAG, remoteMessage.getMessageId());
     if (remoteMessage.getNotification() == null && remoteMessage.getData().size() > 0) {
       Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-      BackgroundFCMHandler converter = new BackgroundFCMHandler(this);
-      BackgroundFCMData data = converter.handleNotification(remoteMessage);
-      if (data != null) {
-          this.sendNotification(remoteMessage.getMessageId(), data.getTitle(), data.getBody(), remoteMessage.getData());
+      try {
+          // Get converter with reflection so we use implementation of user
+          Class BackgroundFCMHandler = Class.forName(getApplicationContext().getPackageName() + ".BackgroundFCMHandler");
+          Object converter = BackgroundFCMHandler.newInstance();
+          Method context = converter.getClass().getMethod("setContext", Context.class);
+          Method handleNotification = converter.getClass().getMethod("handleNotification", BackgroundFCMRemoteMessage.class);
+          context.invoke(converter, this);
+          BackgroundFCMRemoteMessage message = new BackgroundFCMRemoteMessage();
+          message.setId(remoteMessage.getMessageId());
+          message.setData(new JSObject(remoteMessage.getData().toString()));
+          BackgroundFCMData data = (BackgroundFCMData) handleNotification.invoke(converter, message);
+          if (data != null) {
+              this.sendNotification(remoteMessage.getMessageId(), data.getTitle(), data.getBody(), remoteMessage.getData());
+          }
+      } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException | JSONException e) {
+          Log.e(TAG, e.toString());
       }
+
 
     }
     super.onMessageReceived(remoteMessage);
 
   }
 
-  /**
-   * Create and show a simple notification containing the received FCM message.
-   *
-   * @param message FCM message body received.
-   */
   private void sendNotification(String id, String title, String message, Map<String, String> data) {
       Intent intent = new Intent(this, BackgroundFCMTapHandler.class);
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.getcapacitor.JSObject;
+
+import org.json.JSONException;
+
 public class BackgroundFCMTapHandler extends Activity {
 
     private static String TAG = "BackgroundFCMTapHandler";
@@ -21,7 +25,14 @@ public class BackgroundFCMTapHandler extends Activity {
 
         String id = intent.getExtras().getString("id", "");
         String data = intent.getExtras().getString("data", "");
-        BackgroundFCM.onNotificationTap(id, data);
+        BackgroundFCMRemoteMessage remoteMessage = new BackgroundFCMRemoteMessage();
+        remoteMessage.setId(id);
+        try {
+            remoteMessage.setData(new JSObject(data));
+        } catch (JSONException e) {
+            Log.e(TAG, e.toString());
+        }
+        BackgroundFCM.onNotificationTap(remoteMessage);
         Log.d(TAG, "Notification Tapped: " + id);
         startActivity(this.getPackageManager()
                 .getLaunchIntentForPackage(getApplicationContext().getPackageName())
