@@ -37,7 +37,7 @@ public class BackgroundFCM extends Plugin {
         Context context = staticBridge.getContext();
         File path = context.getFilesDir();
         File file = new File(path, "config.txt");
-        FileOutputStream stream = null;
+        FileOutputStream stream;
         try {
             stream = new FileOutputStream(file);
             stream.write(data.getBytes());
