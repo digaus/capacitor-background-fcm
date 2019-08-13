@@ -17,7 +17,11 @@ import com.getcapacitor.JSObject;
 import com.google.firebase.messaging.RemoteMessage;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 
@@ -53,6 +57,7 @@ public class BackgroundFCMService extends CapacitorFirebaseMessagingService {
           Class BackgroundFCMHandler = Class.forName(getApplicationContext().getPackageName() + ".BackgroundFCMHandler");
           BackgroundHandlerInterface converter = (BackgroundHandlerInterface) BackgroundFCMHandler.newInstance();
           converter.setContext(this);
+          converter.setAdditionalData(this.readFile());
           BackgroundFCMRemoteMessage message = new BackgroundFCMRemoteMessage();
           message.setId(remoteMessage.getMessageId());
           message.setData(new JSObject(remoteMessage.getData().toString()));
@@ -108,4 +113,27 @@ public class BackgroundFCMService extends CapacitorFirebaseMessagingService {
       }
       notificationManager.notify(notId, notificationBuilder.build());
   }
+    private JSONObject readFile() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            FileInputStream in = this.openFileInput("config.txt");
+            InputStreamReader inputStreamReader = new InputStreamReader(in);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+            inputStreamReader.close();
+            try {
+                jsonObject = new JSONObject(sb.toString());
+            }catch (JSONException err){
+                Log.e(TAG, err.toString());
+            }
+        } catch(Exception e){
+            Log.e(TAG, e.toString());
+        }
+        return jsonObject;
+    }
+
 }

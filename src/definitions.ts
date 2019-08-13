@@ -5,5 +5,5 @@ declare global {
 }
 
 export interface BackgroundFCMPlugin {
-  writeToFile(options: { value: string }): Promise<{value: string}>;
+  setAdditionalData(options: { value: string }): Promise<{value: string}>;
 }

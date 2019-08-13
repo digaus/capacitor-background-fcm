@@ -1,7 +1,7 @@
 
   Pod::Spec.new do |s|
     s.name = 'CapacitorBackgroundFcm'
-    s.version = '0.0.7'
+    s.version = '0.1.0'
     s.summary = 'Background FCM handling'
     s.license = 'MIT'
     s.homepage = 'https://github.com/digaus/capacitor-background-fcm'

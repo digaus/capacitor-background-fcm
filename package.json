@@ -1,6 +1,6 @@
 {
   "name": "capacitor-background-fcm",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "Background FCM handling",
   "main": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",

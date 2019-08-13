@@ -32,7 +32,7 @@ public class BackgroundFCM extends Plugin {
     }
 
     @PluginMethod()
-    public void writeToFile(PluginCall call) {
+    public void setAdditionalData(PluginCall call) {
         String data = call.getString("value");
         Context context = staticBridge.getContext();
         File path = context.getFilesDir();
