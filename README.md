@@ -9,6 +9,7 @@ Capacitor plugin to enable features from Firebase Cloud Messaging
 ## API
 
 - setAdditionalData
+- addListener('pushNotificationActionPerformed')
 
 ## Usage
 
@@ -23,6 +24,14 @@ const value = {
     translations: this.translateService.translations[this.translateService.currentLang]
 };
 BackgroundFCM.setAdditionalData({value: JSON.stringify(value)});
+
+// Need to listen for click action on the notification
+BackgroundFCM.addListener(
+    'pushNotificationActionPerformed',
+    (notification: PushNotificationActionPerformed) => {
+        console.log('Tapped', notification);
+    }
+);
 ```
 ## iOS setup
 
