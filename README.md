@@ -8,7 +8,7 @@ Capacitor plugin to enable features from Firebase Cloud Messaging
 
 ## API
 
-- setAdditionalData `android only`
+- setAdditionalData
 
 ## Usage
 
