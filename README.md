@@ -35,7 +35,7 @@ BackgroundFCM.addListener(
 ```
 ## iOS setup
 
-> Currently not implemented
+> Currently not implemented, will do once I get my hands on a mac :)
 
 ## Android setup
 
