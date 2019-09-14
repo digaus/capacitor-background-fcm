@@ -5,7 +5,7 @@ import android.content.Context;
 
 import org.json.JSONObject;
 
-public interface BackgroundHandlerInterface {
+public interface BackgroundFCMHandlerInterface {
 
     void setContext(Context context);
     void setAdditionalData(JSONObject additionalData);

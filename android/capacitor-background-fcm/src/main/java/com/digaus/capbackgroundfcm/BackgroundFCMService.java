@@ -55,7 +55,7 @@ public class BackgroundFCMService extends CapacitorFirebaseMessagingService {
       try {
           // Get converter with reflection so we use implementation of user
           Class BackgroundFCMHandler = Class.forName(getApplicationContext().getPackageName() + ".BackgroundFCMHandler");
-          BackgroundHandlerInterface converter = (BackgroundHandlerInterface) BackgroundFCMHandler.newInstance();
+          BackgroundFCMHandlerInterface converter = (BackgroundFCMHandlerInterface) BackgroundFCMHandler.newInstance();
           converter.setContext(this);
           converter.setAdditionalData(this.readFile());
           BackgroundFCMRemoteMessage message = new BackgroundFCMRemoteMessage();

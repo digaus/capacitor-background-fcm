@@ -1,5 +1,5 @@
 import { PushNotificationActionPerformed, PluginListenerHandle } from '@capacitor/core'
-declare module '@capacitor/core/dist/esm/core-plugin-definitions' {
+declare module '@capacitor/core' {
   interface PluginRegistry {
     BackgroundFCM: BackgroundFCMPlugin;
   }
